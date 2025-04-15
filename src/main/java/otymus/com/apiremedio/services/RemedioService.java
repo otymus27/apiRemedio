@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import otymus.com.apiremedio.entities.Remedio;
 import otymus.com.apiremedio.entities.dto.RemedioAtualizarDto;
+import otymus.com.apiremedio.exceptions.DadosInvalidosException;
+import otymus.com.apiremedio.exceptions.RemedioNaoEncontradoException;
 import otymus.com.apiremedio.repositories.RemedioRepository;
 
 import java.util.List;
@@ -27,8 +29,12 @@ public class RemedioService {
         return remedioRepository.findById(id);
     }
 
-    public Remedio cadastrar(Remedio item) {
-        return remedioRepository.save(item);
+    public Remedio cadastrar(Remedio remedio) {
+        // Adicione validações de negócio aqui, se necessário
+        if (remedio.getNome() == null || remedio.getNome().trim().isEmpty()) {
+            throw new DadosInvalidosException("O nome do remédio não pode ser vazio.");
+        }
+        return remedioRepository.save(remedio);
     }
 
     @Transactional
@@ -36,8 +42,9 @@ public class RemedioService {
         return remedioRepository.findById(id)
                 .map(remedio -> {
                     remedio.atualizarDados(dados); // Método na entidade para atualizar os dados
-                    return remedioRepository.save(remedio);
-                });
+                    return Optional.of(remedioRepository.save(remedio)); // Envolve o resultado em Optional.of()
+                })
+                .orElseThrow(() -> new RemedioNaoEncontradoException(id));
     }
 
     @Transactional
