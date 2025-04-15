@@ -55,22 +55,21 @@ public class RemedioController {
     }
 
     @PutMapping("/{id}")
-    @Transactional // Garante a atomicidade da operação no banco de dados
+    @Transactional
     public ResponseEntity<Remedio> atualizar(@PathVariable Long id, @RequestBody @Valid RemedioAtualizarDto dados) {
-        return remedioService.atualizar(id, dados)
-                .map(ResponseEntity::ok) // Se o remédio for encontrado e atualizado, retorna 200 OK com o remédio atualizado
-                .orElse(ResponseEntity.notFound().build()); // Se o remédio não for encontrado, retorna 404 Not Found
+        Remedio remedioAtualizado = remedioService.atualizar(id, dados).orElse(null);
+        if (remedioAtualizado != null) {
+            return ResponseEntity.ok(remedioAtualizado);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
-    @Transactional // Garante a atomicidade da operação no banco de dados
+    @Transactional
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
-        boolean excluido = remedioService.excluir(id);
-        if (excluido) {
-            return ResponseEntity.noContent().build(); // Retorna 204 No Content se a exclusão for bem-sucedida
-        } else {
-            return ResponseEntity.notFound().build(); // Retorna 404 Not Found se o remédio não for encontrado
-        }
+        remedioService.excluir(id);
+        return ResponseEntity.noContent().build();
     }
 
     // Método para buscar pelo nome do medicamento
