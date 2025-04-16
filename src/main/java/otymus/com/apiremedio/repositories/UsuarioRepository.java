@@ -5,7 +5,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 import otymus.com.apiremedio.entities.Usuario;
 
+import java.util.Optional;
+
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-    UserDetails findByLogin(String login);
+
+    Optional<Usuario> findByLogin(String login);
 }

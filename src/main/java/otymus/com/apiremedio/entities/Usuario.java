@@ -3,6 +3,9 @@ package otymus.com.apiremedio.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import otymus.com.apiremedio.entities.dto.LoginRequest;
+
 import java.util.Set;
 
 @Entity(name="Usuario")
@@ -14,7 +17,7 @@ public class Usuario  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String login;
     private String senha;
 
@@ -29,19 +32,10 @@ public class Usuario  {
     public Usuario() {
     }
 
-    public enum Values {
-        ADMIN(1L),
-        BASIC(2L);
+    public boolean isLoginCorrect(LoginRequest loginRequest, PasswordEncoder passwordEncoder) {
 
+        return passwordEncoder.matches(loginRequest.senha(),this.senha);
 
-        Long roleId;
-        Long userId;
-        Values(Long roleId) {
-            this.roleId = roleId;
-        }
-        public Long getRoleId() {
-            return roleId;
-        }
     }
 
 
