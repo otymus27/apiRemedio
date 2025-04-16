@@ -19,18 +19,36 @@ public class Role {
     private Long id;
     private String nome;
 
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public enum Values {
+
         ADMIN(1L),
         BASIC(2L);
 
+        long id;
 
-        Long roleId;
-        Long userId;
-        Values(Long roleId) {
-            this.roleId = roleId;
+        Values(long Id) {
+            this.id = id;
         }
-        public Long getRoleId() {
-            return roleId;
+
+        public long getId() {
+            return id;
         }
     }
 }

@@ -6,6 +6,3 @@ CREATE TABLE tb_usuarios (
     PRIMARY KEY (id)
 ) engine=InnoDB default charset=utf8;
 
-INSERT INTO tb_usuarios ( login, senha) VALUES
-    ( 'admin', 'admin'),
-    ( 'otymus', '123')

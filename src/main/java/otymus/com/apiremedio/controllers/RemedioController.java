@@ -3,6 +3,8 @@ package otymus.com.apiremedio.controllers;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,7 @@ import java.util.List;
 @RequestMapping("/remedios") // Padroniza o caminho base da sua API
 public class RemedioController {
 
+    private static final Logger logger = LoggerFactory.getLogger(RemedioController.class);
     @Autowired
     private RemedioRepository remedioRepository;
 
@@ -32,6 +35,7 @@ public class RemedioController {
     @PostMapping
     @Transactional // Garante a atomicidade da operação no banco de dados
     public ResponseEntity<Remedio> cadastrar(@RequestBody @Valid RemedioCadastrarDto dados, UriComponentsBuilder uriBuilder) {
+        System.out.println(dados);
         Remedio remedioCadastrado = remedioService.cadastrar(new Remedio(dados));
         URI uri = uriBuilder.path("/remedios/{id}").buildAndExpand(remedioCadastrado.getId()).toUri();
         return ResponseEntity.created(uri).body(remedioCadastrado);

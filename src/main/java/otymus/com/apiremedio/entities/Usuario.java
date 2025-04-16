@@ -28,6 +28,14 @@ public class Usuario  {
     private Set<Role> roles;
 
 
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
     //construtor padrão vazio
     public Usuario() {
     }

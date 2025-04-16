@@ -10,11 +10,13 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import otymus.com.apiremedio.entities.Role;
 import otymus.com.apiremedio.entities.dto.LoginRequest;
 import otymus.com.apiremedio.entities.dto.LoginResponse;
 import otymus.com.apiremedio.repositories.UsuarioRepository;
 
 import java.time.Instant;
+import java.util.stream.Collectors;
 
 @RestController
 public class TokenController {
@@ -41,11 +43,17 @@ public class TokenController {
         var now = Instant.now();
         var expiresIn = 300L;
 
+        var scopes = user.get().getRoles()
+                .stream()
+                .map(Role::getNome)
+                .collect(Collectors.joining(" "));
+
         var claims = JwtClaimsSet.builder()
                 .issuer("meuBackend")
                 .subject(user.get().getLogin())
                 .expiresAt(now.plusSeconds(expiresIn))
                 .issuedAt(now)
+                .claim("scope", scopes)
                 .build();
         var jwtValue = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
