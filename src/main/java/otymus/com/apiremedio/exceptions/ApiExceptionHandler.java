@@ -1,6 +1,7 @@
 package otymus.com.apiremedio.exceptions;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException; // Importe AccessDeniedException
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -47,10 +48,12 @@ public class ApiExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> handleGenericException(Exception ex) {
+        if (ex instanceof AccessDeniedException) {
+            throw (AccessDeniedException) ex; // Re-lança para ser tratado pelo AccessDeniedHandler
+        }
         Map<String, String> error = new HashMap<>();
         error.put("erro", "Erro interno no servidor");
         error.put("mensagem", "Ocorreu um erro inesperado. Por favor, tente novamente mais tarde.");
-        // Log the exception for debugging purposes
         ex.printStackTrace();
         return error;
     }
