@@ -19,6 +19,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import otymus.com.apiremedio.exceptions.ApiExceptionHandler;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -35,7 +36,7 @@ public class SecurityConfigurations {
     private RSAPrivateKey privateKey;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, ApiExceptionHandler apiExceptionHandler) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST,"/login" ).permitAll() //essa rota não precisa de autenticação
@@ -43,7 +44,13 @@ public class SecurityConfigurations {
                         .anyRequest().authenticated()) //aqui informa que todas as requisições precisa de autenticação
                 .csrf(csrf -> csrf.disable()) // Desabilita o csrf
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Configura a gestão de sessão com lambda
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(Customizer.withDefaults())
+                        .authenticationEntryPoint(apiExceptionHandler) // garante que sua exception personalizada será usada
+                )
+                .requestCache(cache -> cache.disable()) // evita cache de requisições negadas
+                .securityMatcher("/**"); // <- Essa linha garante que tudo é interceptado corretamente
+
         return http.build();
     }
 
@@ -64,7 +71,5 @@ public class SecurityConfigurations {
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
 
 }

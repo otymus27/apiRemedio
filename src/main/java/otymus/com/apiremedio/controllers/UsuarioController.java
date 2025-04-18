@@ -38,6 +38,7 @@ public class UsuarioController {
 
     @PostMapping()
     @Transactional
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public ResponseEntity<Void> cadastrar(@RequestBody UsuarioCadastrarDto dados) {
         logger.info("Dados recebidos para cadastro: {}", dados); // ADICIONE ESTA LINHA
 
