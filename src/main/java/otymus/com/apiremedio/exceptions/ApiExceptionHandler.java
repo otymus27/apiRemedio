@@ -107,16 +107,6 @@ public class ApiExceptionHandler implements AuthenticationEntryPoint {
         // Simula checagem de endpoint válido (ideal: fazer isso com mais controle)
         boolean endpointValido = path.matches("(/login|/usuarios|/outros-validos)(/.*)?");
 
-        if (!endpointValido) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            new ObjectMapper().writeValue(response.getOutputStream(), Map.of(
-                    "erro", "Endpoint não encontrado",
-                    "mensagem", "O caminho '" + path + "' não existe.",
-                    "path", path
-            ));
-            return;
-        }
-
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         new ObjectMapper().writeValue(response.getOutputStream(), Map.of(
                 "erro", "Não autorizado",
